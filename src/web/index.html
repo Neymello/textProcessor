@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Text Processor</title>
+	
+	<link href="./includes/textProcessor.css" rel="stylesheet" />
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	
+	<script type="text/javascript" src="includes/js/raphael-min.js"></script>
+    <script type="text/javascript" src="includes/js/dracula_graffle.js"></script>
+    <script type="text/javascript" src="includes/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="includes/js/dracula_graph.js"></script>
+    <script type="text/javascript" src="includes/js/dracula_algorithms.js"></script>
+    
+    
+    <script type="text/javascript">
+    	var g = new Graph();
+    	var renderer =  new Graph.Renderer.Raphael();
+    	
+    	function submitForm(){
+    		$.ajax({
+				dataType: "json",
+				url: "http://localhost/cgi/processor.py",
+				data: $("form").serialize(),
+				success: function(data){
+						$("#graph").html("");
+					
+						g = new Graph();
+						
+						for(i in data){
+							
+							g.addEdge(data[i].vFrom,data[i].vTo,{directed:true,label : data[i].weight})
+							
+						}
+						
+						layouter = new Graph.Layout.Spring(g);
+    					layouter.layout();
+						
+						renderer = new Graph.Renderer.Raphael('graph', g, 500, 500);
+						renderer.draw();
+				}
+			});
+			
+			return false;
+		}
+    	
+    </script>
+	
+</head>	
+<body>
+	<div>
+		<form >
+			<!-- <input name="text" id="text" type="file" placeholder="c:\folder" required="required" /> -->
+			<p>
+				<textarea name="text" id="text" > </textarea>
+			</p>
+			<p>
+				<input name="button" id="button" type="button" value="Process.." onclick="submitForm()" />
+			</p>
+		</form>
+	</div>
+	
+	<div>
+		
+		<div id="graph"></div>
+		
+	</div>
+	
+</body>
+</html>
