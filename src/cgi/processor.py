@@ -11,17 +11,18 @@ print()
 scriptPath = "/var/www/textProcessor/"
 
 sys.path.append(scriptPath)
-
 from textProcessor.core.service import Service
 
 processorResult = Service().populateGraph(fs["text"].value)
 
-result = {}
-
-result['graph'] = processorResult.getGraph()
 edges = []
-
 for edge in processorResult.getEdges():
     edges.append({'vFrom':edge[0],'vTo':edge[1],'weight':processorResult.getEdges()[edge]})
 
-print(json.dumps(edges,indent=1))
+result = {}
+result['words'] = processorResult.getWords()
+result['characters'] = processorResult.getCharacters()
+result['nodes'] = processorResult.getGraph()
+result['edges'] = edges
+
+print(json.dumps(result,indent=1))

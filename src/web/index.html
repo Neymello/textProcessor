@@ -3,7 +3,8 @@
 <head>
 	<title>Text Processor</title>
 	
-	<link href="./includes/textProcessor.css" rel="stylesheet" />
+	<link href="./includes/css/jquery.jqplot.css" rel="stylesheet"/>
+	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	
 	<script type="text/javascript" src="includes/js/raphael-min.js"></script>
@@ -11,29 +12,48 @@
     <script type="text/javascript" src="includes/js/dracula_graph.js"></script>
     <script type="text/javascript" src="includes/js/dracula_algorithms.js"></script>
     
+    <script type="text/javascript" src="includes/js/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="includes/js/plugins/jqplot.barRenderer.min.js"></script>
+	<script type="text/javascript" src="includes/js/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="includes/js/plugins/jqplot.pointLabels.min.js"></script>
+    
+    
+    
+    
     
 	<script type="text/javascript">
-    	var g = new Graph();
-    	var renderer =  new Graph.Renderer.Raphael();
-    	
     	function submitForm(){
+    		var g = new Graph();
+    		
     		$.ajax({
 				dataType: "json",
 				url: "/cgi/processor.py",
 				data: $("form").serialize(),
 				success: function(data){
+					
+						drawCharacterChart(data.characters);
+					
+					
 						$("#graph").html("");
 					
 						g = new Graph();
 						
-						var count = 1;
-						for(i in data){
-							g.addEdge(data[i].vFrom,data[i].vTo,{directed:true,label:"  "+data[i].weight,stroke:'red',"label-style":{"font-size": 14,"stroke":"blue","font-weight":"bold"}});
+						for(n in data.nodes){
+							g.addNode(n);
 						}
-						layouter = new Graph.Layout.Spring(g);
-	    					layouter.layout();
 						
-						renderer = new Graph.Renderer.Raphael('graph', g, 800, 800);
+						var count = 1;
+						for(i in data.edges){
+							from = data.edges[i].vFrom
+							to = data.edges[i].vTo
+							weight = data.edges[i].weight
+							g.addEdge(from,to,{directed:true,label:"  "+weight,stroke:'red',"label-style":{"font-size": 14,"stroke":"blue","font-weight":"bold"}});
+						}
+						
+						layouter = new Graph.Layout.Spring(g);
+	    				layouter.layout();
+						
+						var renderer = new Graph.Renderer.Raphael('graph', g, 800, 800);
 						renderer.draw();
 				}
 			});
@@ -48,6 +68,42 @@
 				set.items.forEach(function(el) {el.tooltip(r.set().push(r.rect(0, 0, 30, 30).attr({"fill": "#fec", "stroke-width": 1, r : "9px"})))});
 			return set;
 		}
+		
+		
+		function drawCharacterChart(data){
+			
+			$("#drawCharacterChart").html("");
+			
+	        $.jqplot.config.enablePlugins = true;
+	        
+	        var yAxisValues = [];
+	        var xAxisValues = [];
+	        
+	        for(w in data){
+	        	xAxisValues.push(w);
+	        	yAxisValues.push(data[w]);
+	        }
+	         
+	        plot1 = $.jqplot('drawCharacterChart', [yAxisValues], {
+	            title: "Characters Graph",
+	            animate: !$.jqplot.use_excanvas,
+	            seriesDefaults:{
+	                renderer:$.jqplot.BarRenderer,
+	                pointLabels: { show: true }
+	            },
+	            axes: {
+	                xaxis: {
+	                    renderer: $.jqplot.CategoryAxisRenderer,
+	                    ticks: xAxisValues
+	                },
+	                yaxis: {
+	                	tickOptions: {formatString: '%d'}
+	                }
+	            },
+	            highlighter: { show: false }
+	        });
+		}
+		
 	</script>
 	
 </head>	
@@ -65,9 +121,8 @@
 	</div>
 	
 	<div>
-		
+		<div id="drawCharacterChart" ></div>
 		<div id="graph"></div>
-		
 	</div>
 	
 </body>
