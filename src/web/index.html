@@ -8,43 +8,47 @@
 	
 	<script type="text/javascript" src="includes/js/raphael-min.js"></script>
     <script type="text/javascript" src="includes/js/dracula_graffle.js"></script>
-    <script type="text/javascript" src="includes/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="includes/js/dracula_graph.js"></script>
     <script type="text/javascript" src="includes/js/dracula_algorithms.js"></script>
     
     
-    <script type="text/javascript">
+	<script type="text/javascript">
     	var g = new Graph();
     	var renderer =  new Graph.Renderer.Raphael();
     	
     	function submitForm(){
     		$.ajax({
 				dataType: "json",
-				url: "http://localhost/cgi/processor.py",
+				url: "/cgi/processor.py",
 				data: $("form").serialize(),
 				success: function(data){
 						$("#graph").html("");
 					
 						g = new Graph();
 						
+						var count = 1;
 						for(i in data){
-							
-							g.addEdge(data[i].vFrom,data[i].vTo,{directed:true,label : data[i].weight})
-							
+							g.addEdge(data[i].vFrom,data[i].vTo,{directed:true,label:"  "+data[i].weight,stroke:'red',"label-style":{"font-size": 14,"stroke":"blue","font-weight":"bold"}});
 						}
-						
 						layouter = new Graph.Layout.Spring(g);
-    					layouter.layout();
+	    					layouter.layout();
 						
-						renderer = new Graph.Renderer.Raphael('graph', g, 500, 500);
+						renderer = new Graph.Renderer.Raphael('graph', g, 800, 800);
 						renderer.draw();
 				}
 			});
 			
 			return false;
 		}
-    	
-    </script>
+
+		function renderNode3(r, n) {
+			var set = r.set().push(
+				r.rect(n.point[0]-30, n.point[1]-13, 62, 66).attr({"fill": "#fa8", "stroke-width": 2, r : "9px"})).push(
+				r.text(n.point[0], n.point[1] + 20, n.label).attr({"font-size":"14px"}));
+				set.items.forEach(function(el) {el.tooltip(r.set().push(r.rect(0, 0, 30, 30).attr({"fill": "#fec", "stroke-width": 1, r : "9px"})))});
+			return set;
+		}
+	</script>
 	
 </head>	
 <body>
@@ -52,7 +56,7 @@
 		<form >
 			<!-- <input name="text" id="text" type="file" placeholder="c:\folder" required="required" /> -->
 			<p>
-				<textarea name="text" id="text" > </textarea>
+				<textarea name="text" id="text" required >test of graph generation</textarea>
 			</p>
 			<p>
 				<input name="button" id="button" type="button" value="Process.." onclick="submitForm()" />
