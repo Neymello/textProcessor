@@ -23,7 +23,7 @@ nav ul li {
     text-align: left;
 }
 #banner {
-    background: url("/includes/images/banner2.png") no-repeat scroll 5px 11px / 370px auto transparent;
+    background: url("../images/banner2.png") no-repeat scroll 5px 11px / 370px auto transparent;
     display: inline-block;
     height: 55px;
     padding-top: 50px;
