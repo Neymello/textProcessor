@@ -3,7 +3,9 @@
 <head>
 	<title>Text Processor</title>
 	
+	<link href="./includes/css/textProcessor.css" rel="stylesheet"/>
 	<link href="./includes/css/jquery.jqplot.css" rel="stylesheet"/>
+	
 	
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	
@@ -17,112 +19,42 @@
 	<script type="text/javascript" src="includes/js/plugins/jqplot.categoryAxisRenderer.min.js"></script>
 	<script type="text/javascript" src="includes/js/plugins/jqplot.pointLabels.min.js"></script>
     
-    
-    
-    
-    
-	<script type="text/javascript">
-    	function submitForm(){
-    		var g = new Graph();
-    		
-    		$.ajax({
-				dataType: "json",
-				url: "/cgi/processor.py",
-				data: $("form").serialize(),
-				success: function(data){
-					
-						drawCharacterChart(data.characters);
-					
-					
-						$("#graph").html("");
-					
-						g = new Graph();
-						
-						for(n in data.nodes){
-							g.addNode(n);
-						}
-						
-						var count = 1;
-						for(i in data.edges){
-							from = data.edges[i].vFrom
-							to = data.edges[i].vTo
-							weight = data.edges[i].weight
-							g.addEdge(from,to,{directed:true,label:"  "+weight,stroke:'red',"label-style":{"font-size": 14,"stroke":"blue","font-weight":"bold"}});
-						}
-						
-						layouter = new Graph.Layout.Spring(g);
-	    				layouter.layout();
-						
-						var renderer = new Graph.Renderer.Raphael('graph', g, 800, 800);
-						renderer.draw();
-				}
-			});
-			
-			return false;
-		}
-
-		function renderNode3(r, n) {
-			var set = r.set().push(
-				r.rect(n.point[0]-30, n.point[1]-13, 62, 66).attr({"fill": "#fa8", "stroke-width": 2, r : "9px"})).push(
-				r.text(n.point[0], n.point[1] + 20, n.label).attr({"font-size":"14px"}));
-				set.items.forEach(function(el) {el.tooltip(r.set().push(r.rect(0, 0, 30, 30).attr({"fill": "#fec", "stroke-width": 1, r : "9px"})))});
-			return set;
-		}
-		
-		
-		function drawCharacterChart(data){
-			
-			$("#drawCharacterChart").html("");
-			
-	        $.jqplot.config.enablePlugins = true;
-	        
-	        var yAxisValues = [];
-	        var xAxisValues = [];
-	        
-	        for(w in data){
-	        	xAxisValues.push(w);
-	        	yAxisValues.push(data[w]);
-	        }
-	         
-	        plot1 = $.jqplot('drawCharacterChart', [yAxisValues], {
-	            title: "Characters Graph",
-	            animate: !$.jqplot.use_excanvas,
-	            seriesDefaults:{
-	                renderer:$.jqplot.BarRenderer,
-	                pointLabels: { show: true }
-	            },
-	            axes: {
-	                xaxis: {
-	                    renderer: $.jqplot.CategoryAxisRenderer,
-	                    ticks: xAxisValues
-	                },
-	                yaxis: {
-	                	tickOptions: {formatString: '%d'}
-	                }
-	            },
-	            highlighter: { show: false }
-	        });
-		}
-		
-	</script>
+    <script type="text/javascript" src="includes/js/textProcessor.js"></script>
 	
 </head>	
 <body>
-	<div>
+	<header>
+		<section id="menu">
+			<nav>
+				<ul>
+					<li><a href="/">Home</a></li> |
+					<li>Documentation</li> |
+					<li><a href="https://github.com/Neymello/textProcessor">Source Code</a></li>
+				</ul>
+				
+			</nav>
+		</section>
+		<section id="banner">
+			<span id="author">By Ney Mello Sampaio</span>
+		</section>
+	</header>
+	
+	<div id="container">
+		<div id="status">Status: <span>ready!</span></div>
 		<form >
-			<!-- <input name="text" id="text" type="file" placeholder="c:\folder" required="required" /> -->
 			<p>
-				<textarea name="text" id="text" required >test of graph generation</textarea>
+				<label for="text">Text to be processed:</label><br />
+				<textarea name="text" id="text" required cols="100" rows="20" placeholder="Please paste here the text you would like to process."></textarea>
 			</p>
 			<p>
 				<input name="button" id="button" type="button" value="Process.." onclick="submitForm()" />
 			</p>
 		</form>
-	</div>
 	
-	<div>
-		<div id="drawCharacterChart" ></div>
-		<div id="graph"></div>
+		<div id="results">
+			<div id="drawCharacterChart" ></div>
+			<div id="graph"></div>
+		</div>
 	</div>
 	
 </body>
