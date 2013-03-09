@@ -7,6 +7,7 @@ class Graph(object):
     __edges = {}
     __words = {}
     __characters = {}
+    __nGrams = {}
     
     def getGraph(self):
         return self.__graph
@@ -62,3 +63,14 @@ class Graph(object):
 
     def getCharacters(self):
         return self.__characters
+    
+    def createNGram(self, wordSequence):
+        if(wordSequence in self.__nGrams):
+            self.__nGrams[wordSequence] += 1
+        else:
+            self.__nGrams[wordSequence] = 1
+            
+    def getNGrams(self):
+        return self.__nGrams
+        
+        

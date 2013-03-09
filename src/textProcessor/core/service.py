@@ -9,7 +9,9 @@ class Service(object):
         tokens = Token().createTokens(text.lower())
         graph = Graph()
         
-        
+        """
+        Create the Graph
+        """
         for count in range(0,len(tokens)):
             nFrom = tokens[count]
             
@@ -23,5 +25,14 @@ class Service(object):
                 nTo = tokens[count+1]
                 if( nFrom[-1] not in (self.__endPontuation) and nFrom[0] not in (self.__endPontuation)):
                     graph.createEdge(Token().removePontuation(nFrom),Token().removePontuation(nTo))
+                    
+                    
+        """
+            3-grams
+        """
+        for count in range(0,len(tokens)):
+            if( count+2 < len(tokens)):
+                graph.createNGram((tokens[count],tokens[count+1],tokens[count+2]))
+                
 
         return graph

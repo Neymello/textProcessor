@@ -1,6 +1,9 @@
 function submitForm(){
 	var g = new Graph();
 	
+	$("#status span").css("text-decoration","blink");
+	$("#status span").html("Processing...");
+	
 	$.ajax({
 		dataType: "json",
 		url: "/cgi/processor.py",
@@ -8,8 +11,9 @@ function submitForm(){
 		success: function(data){
 			
 				drawCharacterChart(data.characters);
-			
-			
+				drawNGramChart(data.nGrams);
+				drawWordChart(data.words);
+				
 				$("#graph").html("");
 			
 				g = new Graph();
@@ -29,8 +33,17 @@ function submitForm(){
 				layouter = new Graph.Layout.Spring(g);
 				layouter.layout();
 				
-				var renderer = new Graph.Renderer.Raphael('graph', g, 400, 400);
+				var renderer = new Graph.Renderer.Raphael('graph', g, 1024, 400);				
+				$("#graphTitle").show();
 				renderer.draw();
+				
+				$("#status span").css("text-decoration","none");
+				$("#status span").html("Ready!");
+				
+				$('html,body').animate(
+					{
+						scrollTop: $("#results").offset().top
+					}, 2000);
 		}
 	});
 	
@@ -57,6 +70,68 @@ function drawCharacterChart(data){
         seriesDefaults:{
             renderer:$.jqplot.BarRenderer,
             pointLabels: { show: true }
+        },
+        axes: {
+            xaxis: {
+                renderer: $.jqplot.CategoryAxisRenderer,
+                ticks: xAxisValues
+            },
+            yaxis: {
+            	tickOptions: {formatString: '%d'}
+            }
+        },
+        highlighter: { show: false }
+    });
+}
+
+function drawNGramChart(data){
+	var dataToDisplay = []
+	
+	for(n in data){
+		dataToDisplay.push([n,data[n]]);
+	}
+	
+	var plot3 = jQuery.jqplot ('drawNGramsChart', [dataToDisplay],
+	    {
+	    	title: "3 words sequence (3-grams) Graph",
+	      seriesDefaults: {
+	        renderer: jQuery.jqplot.PieRenderer,
+	        rendererOptions: {
+	          showDataLabels: true,
+	          dataLabels: 'value'
+	        }
+	      },
+	      legend: { show:true, location: 'e' }
+	    }
+	  );
+}
+
+function drawWordChart(data){
+	
+	$("#drawWordsChart").html("");
+	
+    $.jqplot.config.enablePlugins = true;
+    
+    var yAxisValues = [];
+    var xAxisValues = [];
+    
+    for(w in data){
+    	xAxisValues.push(w);
+    	yAxisValues.push(data[w]);
+    }
+     
+    plot2 = $.jqplot('drawWordsChart', [yAxisValues], {
+        title: "Words Graph",
+        animate: !$.jqplot.use_excanvas,
+        seriesDefaults:{
+            renderer:$.jqplot.BarRenderer,
+            pointLabels: { show: true }
+        },
+        axesDefaults:{
+        	tickRenderer: $.jqplot.CanvasAxisTickRenderer ,
+            tickOptions: {
+            	angle: -30,
+          	}
         },
         axes: {
             xaxis: {

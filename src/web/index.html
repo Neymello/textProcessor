@@ -18,10 +18,18 @@
     <script type="text/javascript" src="includes/js/plugins/jqplot.barRenderer.min.js"></script>
 	<script type="text/javascript" src="includes/js/plugins/jqplot.categoryAxisRenderer.min.js"></script>
 	<script type="text/javascript" src="includes/js/plugins/jqplot.pointLabels.min.js"></script>
-    
+	<script type="text/javascript" src="includes/js/plugins/jqplot.pieRenderer.min.js"></script>
+	<script type="text/javascript" src="includes/js/plugins/jqplot.donutRenderer.min.js"></script>
+	
+	<script type="text/javascript" src="includes/js/plugins/jqplot.dateAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="includes/js/plugins/jqplot.canvasTextRenderer.min.js"></script>
+	<script type="text/javascript" src="includes/js/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+	<script type="text/javascript" src="includes/js/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="includes/js/plugins/jqplot.barRenderer.min.js"></script>
+	
     <script type="text/javascript" src="includes/js/textProcessor.js"></script>
 	
-</head>	
+</head>
 <body>
 	<header>
 		<section id="menu">
@@ -44,7 +52,7 @@
 		<form >
 			<p>
 				<label for="text">Text to be processed:</label><br />
-				<textarea name="text" id="text" required cols="100" rows="20" placeholder="Please paste here the text you would like to process."></textarea>
+				<textarea name="text" id="text" required cols="100" rows="15" placeholder="Please paste here the text you would like to process."></textarea>
 			</p>
 			<p>
 				<input name="button" id="button" type="button" value="Process.." onclick="submitForm()" />
@@ -53,6 +61,12 @@
 	
 		<div id="results">
 			<div id="drawCharacterChart" ></div>
+			
+			<div id="drawNGramsChart" ></div>
+			
+			<div id="drawWordsChart" ></div>
+			
+			<p id="graphTitle" style="display:none;text-align: center;color: #7D7D7D">Graph of connections between words</p>
 			<div id="graph"></div>
 		</div>
 	</div>
